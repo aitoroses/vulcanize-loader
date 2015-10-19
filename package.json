@@ -1,8 +1,8 @@
 {
   "name": "vulcanize-loader",
-  "version": "0.8.4",
-  "author": "Tobias Koppers @sokra",
-  "description": "file loader module for webpack",
+  "version": "0.1.0",
+  "author": "Aitor Oses @aitoroses",
+  "description": "vulcanize loader for webcomponents and html-imports for webpack",
   "files": [
     "index.js"
   ],
@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/webpack/file-loader.git"
+    "url": "https://github.com/aitoroses/vulcanize-loader.git"
   },
   "bugs": {
-    "url": "https://github.com/webpack/file-loader/issues"
+    "url": "https://github.com/aitoroses/vulcanize-loader/issues"
   },
-  "homepage": "https://github.com/webpack/file-loader",
+  "homepage": "https://github.com/aitoroses/vulcanize-loader",
   "main": "index.js",
   "directories": {
     "test": "test"
