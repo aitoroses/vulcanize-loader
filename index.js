@@ -4,6 +4,7 @@
 */
 var loaderUtils = require('loader-utils');
 var path = require('path');
+var minify = require('html-minifier').minify;
 var Vulcanize = require('vulcanize')
 
 function vulcanize(opts, path, callback) {
@@ -54,6 +55,17 @@ module.exports = function(content) {
   }, pathname, (err, content) => {
     if (err) {
       callback(err)
+    }
+
+    // Minify the content?
+    var isProduction = process.env.NODE_ENV == 'production'
+
+    if (isProduction) {
+      content = minify(content, {
+        minifyJS: true,
+        minifyCSS: true,
+        removeComments: true,
+      })
     }
 
     emitFile(url, content)

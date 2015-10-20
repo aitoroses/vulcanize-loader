@@ -1,12 +1,13 @@
 {
   "name": "vulcanize-loader",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Aitor Oses @aitoroses",
   "description": "vulcanize loader for webcomponents and html-imports for webpack",
   "files": [
     "index.js"
   ],
   "dependencies": {
+    "html-minifier": "^0.8.0",
     "loader-utils": "~0.2.5",
     "vulcanize": "^1.13.1"
   },
