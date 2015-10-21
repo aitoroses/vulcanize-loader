@@ -2,9 +2,11 @@
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Aitor Oses @aitoroses
 */
-var loaderUtils = require('loader-utils');
-var path = require('path');
-var minify = require('html-minifier').minify;
+var loaderUtils = require('loader-utils')
+var path = require('path')
+var minify = require('html-minifier').minify
+var crisper = require('crisper')
+var babel = require('babel');
 var Vulcanize = require('vulcanize')
 
 function vulcanize(opts, path, callback) {
@@ -18,6 +20,9 @@ function vulcanize(opts, path, callback) {
 }
 
 module.exports = function(content) {
+
+  var loaderContext = this
+
   // Generate url
   const generateUrl = (query, content) => {
     var url = loaderUtils.interpolateName(this, query.name || '[hash].[ext]', {
@@ -48,6 +53,10 @@ module.exports = function(content) {
   // pathname
   var pathname = loaderUtils.interpolateName(this, '[path][name].[ext]', {})
 
+  // Add file dependency to watchlist
+  //var pwd = loaderUtils.interpolateName(this, '[path]', {})
+  //loaderContext.dependency(pwd + 'required.html')
+
   // Vulcanize the file
   vulcanize({
     inlineScripts: true,
@@ -68,7 +77,21 @@ module.exports = function(content) {
       })
     }
 
-    emitFile(url, content)
+    var jsFile = url.replace(/\.html$/, '.js')
+
+    // extract JS
+    var out = crisper({
+      source: content,
+      jsFileName: (query.base || '') + '/' + jsFile,
+
+      // scriptInHead: Boolean, // default false
+      // onlySplit: Boolean // default false
+    })
+
+    emitFile(url, out.html)
+    emitFile(jsFile, babel.transform(out.js).code)
+
+    //emitFile(url, content)
 
     // export the filename
     // var result = '__webpack_public_path__ + ' + JSON.stringify(url);

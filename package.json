@@ -7,8 +7,11 @@
     "index.js"
   ],
   "dependencies": {
+    "babel": "^5.8.23",
+    "crisper": "^1.1.0",
     "html-minifier": "^0.8.0",
     "loader-utils": "~0.2.5",
+    "uglify-js": "^2.5.0",
     "vulcanize": "^1.13.1"
   },
   "devDependencies": {
