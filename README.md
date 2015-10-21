@@ -1,63 +1,28 @@
-# file loader for webpack
+# Vulcanize loader for webpack
+
+Use **html-imports** and **webcomponents** in your webpack bundle with Vulcanize (from Polymer)
 
 ## Usage
 
-[Documentation: Using loaders](http://webpack.github.io/docs/using-loaders.html)
-
 ``` javascript
-var url = require("file!./file.png");
-// => emits file.png as file in the output directory and returns the public url
-// => returns i. e. "/public-path/0dcbbaa701328a3c262cfd45869e351f.png"
+require("vulcanize?base=/lib!./polymer.html");
+require("vulcanize?base=/lib!./hello-world.html");
+// => uses polymer.html hello-world.html as the entry files for `Vulcanize` in the output directory.
+// => The module will write the document.head to add the corresponding html-import.
+// => returns i. e. "/public-path/0dcbbaa701328a3c262cfd45869e351f.html"
 ```
 
-By default the filename of the resulting file is the MD5 hash of the file's contents 
-with the original extension of the required resource.
+## ES6 goodies
 
-## Filename templates
+To be able to use ES6 in your javascript, you'll need to add the `es6` flag. Your vulcanized file will be splitted into HTML and Javascript files.
 
-You can configure a custom filename template for your file using the query
-parameter `name`. For instance, to copy a file from your `context` directory
-into the output directory retaining the full directory structure, you might
-use `?name=[path][name].[ext]`.
-
-### Filename template placeholders
-
-* `[ext]` the extension of the resource
-* `[name]` the basename of the resource
-* `[path]` the path of the resource relative to the `context` query parameter or option.
-* `[hash]` the hash or the content
-* `[<hashType>:hash:<digestType>:<length>]` optionally you can configure
-  * other `hashType`s, i. e. `sha1`, `md5`, `sha256`, `sha512`
-  * other `digestType`s, i. e. `hex`, `base26`, `base32`, `base36`, `base49`, `base52`, `base58`, `base62`, `base64`
-  * and `length` the length in chars
-* `[N]` the N-th match obtained from matching the current file name against the query param `regExp`
-
-## Examples
-
-``` javascript
-require("file?name=js/[hash].script.[ext]!./javascript.js");
-// => js/0dcbbaa701328a3c262cfd45869e351f.script.js
-
-require("file?name=html-[hash:6].html!./page.html");
-// => html-109fa8.html
-
-require("file?name=[hash]!./flash.txt");
-// => c31e9820c001c9c4a86bce33ce43b679
-
-require("file?name=[sha512:hash:base64:7].[ext]!./image.png");
-// => gdyb21L.png
-// use sha512 hash instead of md5 and with only 7 chars of base64
-
-require("file?name=img-[sha512:hash:base64:7].[ext]!./image.jpg");
-// => img-VqzT5ZC.jpg
-// use custom name, sha512 hash instead of md5 and with only 7 chars of base64
-
-require("file?name=picture.png!./myself.png");
-// => picture.png
-
-require("file?name=[path][name].[ext]?[hash]!./dir/file.png")
-// => dir/file.png?e43b20c069c4a01867c31e98cbce33c9
+```js
+require("vulcanize?es6&base=/lib!./hello-world.html");
+// => Produces "/public-path/0dcbbaa701328a3c262cfd45869e351f.html"
+// => Produces "/public-path/0dcbbaa701328a3c262cfd45869e351f.js"
+// => The JS file will be linked to the HTML file
 ```
+
 
 ## License
 
