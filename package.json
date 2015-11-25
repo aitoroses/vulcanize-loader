@@ -1,6 +1,6 @@
 {
   "name": "vulcanize-loader",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "Aitor Oses @aitoroses",
   "description": "vulcanize loader for webcomponents and html-imports for webpack",
   "files": [
@@ -11,6 +11,7 @@
     "crisper": "^1.1.0",
     "html-minifier": "^0.8.0",
     "loader-utils": "~0.2.5",
+    "minimize": "^1.7.4",
     "uglify-js": "^2.5.0",
     "vulcanize": "^1.13.1"
   },

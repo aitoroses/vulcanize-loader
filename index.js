@@ -4,7 +4,6 @@
 */
 var loaderUtils = require('loader-utils');
 var path = require('path');
-var minify = require('html-minifier').minify;
 var crisper = require('crisper');
 var babel = require('babel');
 var UglifyJS = require('uglify-js');
@@ -26,19 +25,6 @@ function vulcanize(opts, path, callback) {
       callback(err, inlinedHtml);
     }
   });
-}
-
-// Minify the HTML content?
-function minifyHTML(content) {
-  if (isProduction) {
-    return minify(content, {
-      minifyJS: true,
-      minifyCSS: true,
-      removeComments: true,
-    });
-  } else {
-    return content;
-  }
 }
 
 module.exports = function(content) {
@@ -109,13 +95,13 @@ module.exports = function(content) {
       }
 
       // Emit HTML and JS separatedly
-      emitFile(url, minifyHTML(out.html));
+      emitFile(url, out.html);
       emitFile(jsFile, es5Output);
 
     } else {
 
       // Emit vulcanized support
-      emitFile(url, minifyHTML(content));
+      emitFile(url, content);
     }
 
     // export the filename
