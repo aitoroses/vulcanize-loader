@@ -1,25 +1,31 @@
 {
   "name": "vulcanize-loader",
-  "version": "0.3.1",
+  "version": "1.0.0",
   "author": "Aitor Oses @aitoroses",
   "description": "vulcanize loader for webcomponents and html-imports for webpack",
   "files": [
     "index.js"
   ],
   "dependencies": {
-    "babel": "^5.8.23",
-    "crisper": "^1.1.0",
-    "html-minifier": "^0.8.0",
+    "crisper": "^2.0.1",
+    "freshman": "^0.9.3",
+    "html-minifier": "^1.1.1",
     "loader-utils": "~0.2.5",
     "minimize": "^1.7.4",
     "uglify-js": "^2.5.0",
     "vulcanize": "^1.13.1"
   },
   "devDependencies": {
-    "should": "~4.0.4",
-    "mocha": "~1.21.3"
+    "babel": "^6.3.26",
+    "babel-cli": "^6.4.0",
+    "babel-core": "^6.4.5",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "mocha": "^2.3.4",
+    "should": "^8.0.2"
   },
   "scripts": {
+    "build": "node_modules/.bin/babel src -d lib",
     "test": "mocha -R spec"
   },
   "repository": {
@@ -30,7 +36,7 @@
     "url": "https://github.com/aitoroses/vulcanize-loader/issues"
   },
   "homepage": "https://github.com/aitoroses/vulcanize-loader",
-  "main": "index.js",
+  "main": "lib/index.js",
   "directories": {
     "test": "test"
   },
