@@ -2,13 +2,14 @@
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Aitor Oses @aitoroses
 */
-const loaderUtils = require('loader-utils');
-const path = require('path');
-const crisper = require('crisper');
-const babel = require('babel-core');
-require('babel-polyfill')
-const UglifyJS = require('uglify-js');
-const Vulcanize = require('vulcanize');
+
+import loaderUtils from 'loader-utils'
+import path from 'path'
+import crisper from 'crisper'
+import babel from 'babel-core'
+import UglifyJS from 'uglify-js'
+import Vulcanize from 'vulcanize'
+// import {minify as minifyHTML} from 'html-minifier'
 
 import { compose, Maybe } from 'freshman'
 
@@ -27,7 +28,7 @@ const vulcanize = (opts, path) => new Promise((resolve, reject) => {
 module.exports = async function main(content) {
 
   // isProduction :: Boolean
-  const isProduction = this.query.minify ? this.query.minify : process.env.NODE_ENV == 'production';
+  const isProduction = this.query.minify ? JSON.parse(this.query.minify) : process.env.NODE_ENV == 'production';
 
   // query :: QueryString -> Query
   const query = loaderUtils.parseQuery(this.query);
@@ -100,6 +101,8 @@ module.exports = async function main(content) {
   // transformJS :: String -> String
   const transformJS = compose(uglify, babelCode)
 
+  const htmlCode = (content) => isProduction ? minifyHTML(content, {}) : content
+
   // emitFiles :: String -> String -> IO
   const emitFiles = (js, html) => {
       emitFile(urlExt('.html'), html);
@@ -117,7 +120,7 @@ module.exports = async function main(content) {
         let value = vulcanized.get()
         let crisped = crisp(value)
         js = transformJS(crisped.js)
-        html = crisped.html
+        html = htmlCode(crisped.html)
       } catch(e) {
         console.error(e)
       }
