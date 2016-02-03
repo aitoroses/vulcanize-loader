@@ -27,7 +27,7 @@ const vulcanize = (opts, path) => new Promise((resolve, reject) => {
 module.exports = async function main(content) {
 
   // isProduction :: Boolean
-  const isProduction = this.query.minify ? this.query.minify process.env.NODE_ENV == 'production';
+  const isProduction = this.query.minify ? this.query.minify : process.env.NODE_ENV == 'production';
 
   // query :: QueryString -> Query
   const query = loaderUtils.parseQuery(this.query);
