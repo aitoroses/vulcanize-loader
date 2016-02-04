@@ -6,12 +6,12 @@
 import loaderUtils from 'loader-utils'
 import path from 'path'
 import crisper from 'crisper'
-import babel from 'babel-core'
+import * as babel from 'babel-core'
 import UglifyJS from 'uglify-js'
 import Vulcanize from 'vulcanize'
-// import {minify as minifyHTML} from 'html-minifier'
+import {minify as minifyHTML} from 'html-minifier'
 
-import { compose, Maybe } from 'freshman'
+import { compose, prop, Maybe } from 'freshman'
 
 // vulcanize :: VulcanizerOptions -> String -> Task Error String
 const vulcanize = (opts, path) => new Promise((resolve, reject) => {
@@ -54,10 +54,9 @@ module.exports = async function main(content) {
     let c = this.async();
 
     // Use asynchronous processing
-    return (err, result) => {
-      if (!result) c(null, err)
-      else c(err, result)
-    }
+    let resolve = (result) => c(null, result)
+    let reject = (err) => c(err)
+    return {resolve, reject}
   }
 
   // Generate the final url of the file
@@ -101,7 +100,8 @@ module.exports = async function main(content) {
   // transformJS :: String -> String
   const transformJS = compose(uglify, babelCode)
 
-  const htmlCode = (content) => isProduction ? minifyHTML(content, {}) : content
+  // htmlCode :: String -> String
+  const htmlCode = (content) => false /*isProduction*/ ? minifyHTML(content, {}) : content
 
   // emitFiles :: String -> String -> IO
   const emitFiles = (js, html) => {
@@ -111,25 +111,17 @@ module.exports = async function main(content) {
 
   // processContent :: String -> IO
   const processContent = async (content) => {
-    let vulcanized = await vulcanizeContent(content)
-
-    let js, html
-
-    if (vulcanized.isJust) {
-      try {
-        let value = vulcanized.get()
-        let crisped = crisp(value)
-        js = transformJS(crisped.js)
-        html = htmlCode(crisped.html)
-      } catch(e) {
-        console.error(e)
-      }
-    } else {
-      js = html = ""
-      throw Error('Error while vulcanizing')
+    try {
+      let vulcanized = await vulcanizeContent(content)
+      let crisped = vulcanized.map(crisp)
+      let html = crisped.map(compose(htmlCode, prop('html')))
+      let js = crisped.map(compose(transformJS, prop('js')))
+      emitFiles(js.get(), html.get())
+      return {js, html}
+    } catch(e) {
+      console.error(e)
+      throw e
     }
-
-    emitFiles(js, html)
   }
 
   // finalUrl :: String
@@ -150,12 +142,12 @@ module.exports = async function main(content) {
   // ---------------------
   // Run Impure code
   try {
-    let resolve = callback()
+    const {resolve, reject} = callback()
     await processContent(content)
     let result = webpackModuleResult(finalUrl)
     resolve(result)
   } catch(e) {
-    resolve(e, result)
+    reject(e)
     console.error(e)
   }
 }

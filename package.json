@@ -1,6 +1,6 @@
 {
   "name": "vulcanize-loader",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "author": "Aitor Oses @aitoroses",
   "description": "vulcanize loader for webcomponents and html-imports for webpack",
   "dependencies": {
