@@ -92,7 +92,9 @@ module.exports = async function main(content) {
   const es6 = true //query.es6 != null
 
   // babelCode :: String -> String
-  const babelCode = (content) => es6 ? babel.transform(content, {compact: false}).code : content
+  const babelCode = (content) => es6
+    ? babel.transform(content, {compact: false, presets: ['es2015']}).code 
+    : content
 
   // uglify :: String -> String
   const uglify = (content) => isProduction ? UglifyJS.minify(content, {fromString: true}).code : content
