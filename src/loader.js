@@ -34,7 +34,7 @@ module.exports = async function main(content) {
   const query = loaderUtils.parseQuery(this.query);
 
   // pathname :: String -> String
-  const pathname = (format = '[path][name].[ext]') => loaderUtils.interpolateName(this, format, {});
+  const pathname = (format = '[path][name].[ext]') => path.normalize(loaderUtils.interpolateName(this, format, {}));
 
   // emitFile :: String -> String
   const emitFile = (url, content) => this.emitFile(url, content)
@@ -69,6 +69,27 @@ module.exports = async function main(content) {
   // addDependency :: String -> IO
   const addDependency = (relativePath) => this.dependency(pathname('[path]' + relativePath))
 
+  // addContextDependency :: String -> IO
+  const addContextDependency = (relativePath) => this.addContextDependency(pathname('[path]' + relativePath))
+
+  // watchFiles :: IO
+  const watchFiles = () => {
+    if (query.watchFiles){
+      for (let f of query.watchFiles.split("|")){
+        addDependency(f);
+      }
+    }
+  }
+
+  // watchFolders :: IO
+  const watchFolders = () => {
+    if (query.watchFolders){
+      for (let f of query.watchFolders.split("|")){
+        addContextDependency(f);
+      }
+    }
+  }
+
   // vulcanizedContent :: String -> Maybe String
   const vulcanizeContent = async (content) => {
     try {
@@ -92,7 +113,9 @@ module.exports = async function main(content) {
   const es6 = true //query.es6 != null
 
   // babelCode :: String -> String
-  const babelCode = (content) => es6 ? babel.transform(content, {compact: false}).code : content
+  const babelCode = (content) => es6
+    ? babel.transform(content, {compact: false, presets: ['es2015']}).code 
+    : content
 
   // uglify :: String -> String
   const uglify = (content) => isProduction ? UglifyJS.minify(content, {fromString: true}).code : content
@@ -116,6 +139,8 @@ module.exports = async function main(content) {
       let crisped = vulcanized.map(crisp)
       let html = crisped.map(compose(htmlCode, prop('html')))
       let js = crisped.map(compose(transformJS, prop('js')))
+      watchFiles()
+      watchFolders()
       emitFiles(js.get(), html.get())
       return {js, html}
     } catch(e) {
