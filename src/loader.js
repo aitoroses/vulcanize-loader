@@ -5,6 +5,7 @@
 
 import loaderUtils from 'loader-utils'
 import path from 'path'
+import fs from 'fs'
 import crisper from 'crisper'
 import * as babel from 'babel-core'
 import UglifyJS from 'uglify-js'
@@ -110,11 +111,25 @@ module.exports = async function main(content) {
   const crisp = (content) => crisper({ source: content, jsFileName: jsFileName})
 
   // es6 :: Boolean
-  const es6 = true //query.es6 != null
+  const es6 =  (query.es6 != false && query.es6 != "false") ? true : false
+
+  // babelRc :: Object
+  const babelRc = (() => {
+      let options
+      try {
+          options = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), '.babelrc'), 'utf-8'))
+      } catch(e) {
+          options = {compact: false}
+      }
+      console.log("Using options for babel " + JSON.stringify(options))
+      return options
+  })()
+
+  console.log(es6)
 
   // babelCode :: String -> String
   const babelCode = (content) => es6
-    ? babel.transform(content, {compact: false, presets: ['es2015']}).code 
+    ? babel.transform(content, babelRc).code
     : content
 
   // uglify :: String -> String
