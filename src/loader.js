@@ -121,11 +121,8 @@ module.exports = async function main(content) {
       } catch(e) {
           options = {compact: false}
       }
-      console.log("Using options for babel " + JSON.stringify(options))
       return options
   })()
-
-  console.log(es6)
 
   // babelCode :: String -> String
   const babelCode = (content) => es6
