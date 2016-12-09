@@ -119,7 +119,7 @@ module.exports = async function main(content) {
       try {
           options = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), '.babelrc'), 'utf-8'))
       } catch(e) {
-          options = {compact: false}
+          options = {compact: false, presets: ['es2015']}
       }
       return options
   })()
@@ -162,7 +162,7 @@ module.exports = async function main(content) {
   }
 
   // finalUrl :: String
-  const finalUrl = (query.base || '') + '/' + pathname('[name].[ext]')
+  const finalUrl = (query.base ? query.base + '/' : '') + pathname('[name].[ext]')
 
   // webpackModuleResult :: String -> String
   const webpackModuleResult = (url) => (
@@ -170,7 +170,7 @@ module.exports = async function main(content) {
       '\t\t\t',
       'var link = document.createElement(\'link\');',
       'link.rel = \'import\';',
-      'link.href = ' + JSON.stringify(finalUrl) + ';',
+      'link.href = __webpack_public_path__ + ' + JSON.stringify(finalUrl) + ';',
       'document.head.appendChild(link)',
       // 'module.exports = __webpack_public_path__ + ' + JSON.stringify(url),
     ].join('\n\t\t\t')
