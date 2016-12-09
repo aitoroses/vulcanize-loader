@@ -20,8 +20,8 @@ function run(resourcePath, query, content) {
 	return result;
 }
 
-function test(excepted, resourcePath, query, content) {
-	run(resourcePath, query, content).should.be.eql(excepted);
+function test(expected, resourcePath, query, content) {
+	run(resourcePath, query, content).should.be.eql(expected);
 }
 
 describe("correct-filename", function() {
